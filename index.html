@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<!-- lang="ar" و dir="rtl" لضمان الاتجاه من اليمين لليسار في كامل الصفحة -->
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <!-- عرض متجاوب صحيح على الهواتف -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <title>دفتري — إدارة الملاحظات</title>
+  <meta name="description" content="تطبيق عربي أنيق لإدارة الملاحظات مدعوم بـ Supabase" />
+
+  <!-- ===== جاهزية PWA ===== -->
+  <meta name="theme-color" content="#5b5bd6" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="دفتري" />
+  <!-- لتفعيل وضع PWA الكامل: أنشئ ملف manifest.webmanifest وافتح السطر التالي
+  <link rel="manifest" href="manifest.webmanifest" />
+  وأيضاً أضف ملف service-worker.js وفعّل ENABLE_PWA داخل app.js -->
+
+  <!-- خط Cairo من Google Fonts (يدعم العربية بشكل ممتاز) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- ملف التنسيقات الخارجي -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- خلفية زخرفية (أشكال ناعمة خلف المحتوى) -->
+  <div class="bg-decor" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <!-- =========================================================
+       الشاشة الأولى: تسجيل الدخول / إنشاء حساب جديد
+       ========================================================= -->
+  <section id="authScreen" class="screen auth-screen">
+
+    <div class="auth-card">
+      <!-- شعار التطبيق -->
+      <div class="brand">
+        <span class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
+            <path d="M14 3v5h5" />
+            <path d="M9 13h6M9 17h4" />
+          </svg>
+        </span>
+        <h1 class="brand-title">دفتري</h1>
+        <p class="brand-sub">ملاحظاتك... منظّمة وأنيقة في مكان واحد</p>
+      </div>
+
+      <!-- أزرار التبديل بين الدخول وإنشاء الحساب -->
+      <div class="tabs" role="tablist" aria-label="نوع الحساب">
+        <button id="tabLogin" type="button" class="tab-btn active" role="tab" aria-selected="true">
+          تسجيل الدخول
+        </button>
+        <button id="tabSignup" type="button" class="tab-btn" role="tab" aria-selected="false">
+          حساب جديد
+        </button>
+      </div>
+
+      <!-- نموذج تسجيل الدخول -->
+      <form id="loginForm" class="auth-form" novalidate>
+        <div class="field">
+          <label for="loginEmail">البريد الإلكتروني</label>
+          <input id="loginEmail" type="email" inputmode="email" autocomplete="email"
+                 placeholder="example@mail.com" required />
+        </div>
+        <div class="field">
+          <label for="loginPassword">كلمة المرور</label>
+          <input id="loginPassword" type="password" autocomplete="current-password"
+                 placeholder="••••••••" minlength="6" required />
+        </div>
+        <!-- رسالة الخطأ -->
+        <p id="loginError" class="form-error" role="alert" hidden></p>
+        <button id="loginBtn" type="submit" class="btn btn-primary btn-block">دخول</button>
+      </form>
+
+      <!-- نموذج إنشاء حساب جديد -->
+      <form id="signupForm" class="auth-form" novalidate hidden>
+        <div class="field">
+          <label for="signupEmail">البريد الإلكتروني</label>
+          <input id="signupEmail" type="email" inputmode="email" autocomplete="email"
+                 placeholder="example@mail.com" required />
+        </div>
+        <div class="field">
+          <label for="signupPassword">كلمة المرور</label>
+          <input id="signupPassword" type="password" autocomplete="new-password"
+                 placeholder="٦ أحرف على الأقل" minlength="6" required />
+        </div>
+        <!-- رسالة الخطأ -->
+        <p id="signupError" class="form-error" role="alert" hidden></p>
+        <button id="signupBtn" type="submit" class="btn btn-primary btn-block">إنشاء الحساب</button>
+      </form>
+
+      <!-- حالة الاتصال بقاعدة البيانات (يحدّثها app.js تلقائياً) -->
+      <p id="dbStatus" class="db-status" role="status">جارٍ فحص الاتصال بقاعدة البيانات...</p>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       الشاشة الثانية: واجهة الملاحظات (مخفية حتى تسجيل الدخول)
+       ========================================================= -->
+  <section id="appScreen" class="screen app-screen" hidden>
+
+    <!-- الشريط العلوي: بريد المستخدم + شارة الصلاحية + زر الخروج -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand-mini">
+          <span class="brand-icon small">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
+              <path d="M14 3v5h5" />
+              <path d="M9 13h6M9 17h4" />
+            </svg>
+          </span>
+          <span class="brand-name">دفتري</span>
+        </div>
+
+        <div class="user-area">
+          <div class="user-meta">
+            <span id="userEmail" class="user-email"></span>
+            <!-- شارة الصلاحية: مستخدم / مدير -->
+            <span id="roleBadge" class="badge badge-user">مستخدم</span>
+          </div>
+          <button id="logoutBtn" type="button" class="btn btn-ghost">تسجيل الخروج</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+
+      <!-- نموذج إضافة ملاحظة -->
+      <form id="noteForm" class="note-form" novalidate>
+        <h2 class="section-title">ملاحظة جديدة</h2>
+        <div class="field">
+          <label for="noteTitle">العنوان</label>
+          <input id="noteTitle" type="text" maxlength="80" placeholder="عنوان الملاحظة..." required />
+        </div>
+        <div class="field">
+          <label for="noteContent">المحتوى</label>
+          <textarea id="noteContent" rows="4" maxlength="2000"
+                    placeholder="اكتب ملاحظتك هنا..." required></textarea>
+        </div>
+        <p id="noteError" class="form-error" role="alert" hidden></p>
+        <button id="saveNoteBtn" type="submit" class="btn btn-primary">
+          حفظ الملاحظة
+        </button>
+      </form>
+
+      <!-- شبكة عرض الملاحظات -->
+      <div class="notes-head">
+        <h2 class="section-title">ملاحظاتي</h2>
+        <span id="notesCount" class="count-pill">٠</span>
+      </div>
+
+      <div id="notesGrid" class="notes-grid" aria-live="polite"></div>
+
+      <!-- الحالة الفارغة -->
+      <div id="emptyState" class="empty" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
+          <path d="M14 3v5h5" />
+        </svg>
+        <p>لا توجد ملاحظات بعد... ابدأ بكتابة أول ملاحظة لك!</p>
+      </div>
+
+      <!-- مؤشر التحميل -->
+      <p id="loadingState" class="loading" hidden>جارٍ تحميل الملاحظات...</p>
+    </main>
+  </section>
+
+  <!-- تنبيهات منبثقة (Toast) -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- مكتبة Supabase JS عبر CDN في نهاية الـ body كما هو مطلوب -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- ملف منطق التطبيق: الاتصال بـ Supabase + المصادقة + الملاحظات -->
+  <script src="app.js"></script>
+</body>
+</html>
