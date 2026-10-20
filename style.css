@@ -1,0 +1,606 @@
+/* =========================================================
+   دفتري — ملف التنسيقات الرئيسي
+   تصميم عصري مريح للعين، داعم للاتجاه RTL ووضع ليلي/نهاري
+   ========================================================= */
+
+/* ---------- ١) المتغيرات العامة (ثيم نهاري) ---------- */
+:root {
+  --bg: #eef1f9;
+  --surface: #ffffff;
+  --surface-soft: #f6f7fc;
+  --text: #1b1f33;
+  --text-muted: #6c7293;
+  --border: rgba(27, 31, 51, 0.10);
+  --primary: #5b5bd6;
+  --primary-2: #8b5cf6;
+  --gradient: linear-gradient(135deg, #5b5bd6 0%, #8b5cf6 100%);
+  --success: #18a058;
+  --danger: #e5484d;
+  --shadow: 0 18px 45px -20px rgba(27, 31, 51, 0.35);
+  --shadow-soft: 0 8px 24px -12px rgba(27, 31, 51, 0.22);
+  --radius: 20px;
+  --radius-sm: 14px;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- ٢) الوضع الليلي (حسب تفضيل النظام) ---------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1122;
+    --surface: #171a2e;
+    --surface-soft: #1e2240;
+    --text: #e9ebf7;
+    --text-muted: #9aa0c0;
+    --border: rgba(233, 235, 247, 0.12);
+    --shadow: 0 18px 45px -20px rgba(0, 0, 0, 0.7);
+    --shadow-soft: 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+    --success: #3ddc84;
+  }
+}
+
+/* ---------- ٣) إعادة الضبط والأساسيات ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* الخاصية hidden يجب أن تخفي العناصر دائماً */
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* ---------- ٤) الخلفية الزخرفية (أشكال ناعمة) ---------- */
+.bg-decor {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.35;
+  animation: float 14s ease-in-out infinite;
+}
+
+.blob-1 { width: 340px; height: 340px; background: #5b5bd6; top: -80px; right: -60px; }
+.blob-2 { width: 280px; height: 280px; background: #22c1c3; bottom: -60px; left: -50px; animation-delay: -5s; }
+.blob-3 { width: 220px; height: 220px; background: #f093fb; top: 45%; left: 30%; animation-delay: -9s; opacity: 0.25; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-28px) scale(1.06); }
+}
+
+/* ---------- ٥) الأزرار ---------- */
+.btn {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 1.6rem;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition),
+              background var(--transition), opacity var(--transition);
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--primary-2);
+  outline-offset: 2px;
+}
+
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--gradient);
+  color: #fff;
+  box-shadow: 0 10px 24px -10px rgba(91, 91, 214, 0.7);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px -12px rgba(91, 91, 214, 0.85);
+}
+
+.btn-primary:active:not(:disabled) { transform: translateY(0); }
+
+.btn-block { width: 100%; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1.5px solid var(--border);
+}
+
+.btn-ghost:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* ---------- ٦) شاشة تسجيل الدخول ---------- */
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 430px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 6px);
+  box-shadow: var(--shadow);
+  padding: 2.4rem 2rem;
+  animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* الشعار */
+.brand { text-align: center; margin-bottom: 1.8rem; }
+
+.brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 22px;
+  background: var(--gradient);
+  color: #fff;
+  box-shadow: 0 14px 28px -12px rgba(91, 91, 214, 0.8);
+  margin-bottom: 0.9rem;
+}
+
+.brand-icon svg { width: 34px; height: 34px; }
+.brand-icon.small { width: 40px; height: 40px; border-radius: 12px; margin-bottom: 0; }
+.brand-icon.small svg { width: 22px; height: 22px; }
+
+.brand-title {
+  font-size: 1.9rem;
+  font-weight: 800;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.brand-sub { color: var(--text-muted); font-size: 0.95rem; }
+
+/* أزرار التبويب */
+.tabs {
+  display: flex;
+  gap: 0.4rem;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem;
+  margin-bottom: 1.6rem;
+}
+
+.tab-btn {
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.tab-btn.active {
+  background: var(--surface);
+  color: var(--primary);
+  box-shadow: var(--shadow-soft);
+}
+
+/* الحقول */
+.field { margin-bottom: 1.1rem; }
+
+.field label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 1rem;
+  transition: border-color var(--transition), box-shadow var(--transition),
+              background var(--transition);
+  resize: vertical;
+}
+
+.field input::placeholder,
+.field textarea::placeholder { color: var(--text-muted); opacity: 0.7; }
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 4px rgba(91, 91, 214, 0.15);
+}
+
+/* رسالة الخطأ داخل النماذج */
+.form-error {
+  background: rgba(229, 72, 77, 0.12);
+  color: var(--danger);
+  border: 1px solid rgba(229, 72, 77, 0.3);
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+/* حالة الاتصال بقاعدة البيانات (يحدّثها app.js) */
+.db-status {
+  margin-top: 1.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  text-align: center;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.db-status.ok {
+  color: var(--success);
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--success) 45%, transparent);
+  background: color-mix(in srgb, var(--success) 10%, transparent);
+}
+
+.db-status.err {
+  color: var(--danger);
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+}
+
+/* ---------- ٧) الشريط العلوي ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0.8rem 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-mini { display: flex; align-items: center; gap: 0.6rem; }
+
+.brand-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.user-area { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
+
+.user-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.user-email {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  direction: ltr;
+  unicode-bidi: embed;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* شارة الصلاحية */
+.badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.22rem 0.75rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge-user  { background: rgba(91, 91, 214, 0.14); color: var(--primary); }
+.badge-admin { background: rgba(240, 147, 251, 0.18); color: #b13bc4; }
+
+/* ---------- ٨) الحاوية الرئيسية ---------- */
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2rem 1.4rem 4rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title::before {
+  content: '';
+  width: 6px;
+  height: 24px;
+  border-radius: 99px;
+  background: var(--gradient);
+}
+
+/* نموذج إضافة ملاحظة */
+.note-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  padding: 1.6rem;
+  margin-bottom: 2.6rem;
+}
+
+/* رأس قسم الملاحظات + عدّاد */
+.notes-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.2rem;
+}
+
+.notes-head .section-title { margin-bottom: 0; }
+
+.count-pill {
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.1rem 0.7rem;
+  border-radius: 999px;
+}
+
+/* ---------- ٩) شبكة بطاقات الملاحظات ---------- */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+  gap: 1.2rem;
+}
+
+.note-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  padding: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition);
+  animation: cardIn 0.4s ease both;
+}
+
+/* شريط لوني علوي للبطاقة */
+.note-card::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 4px;
+  background: var(--gradient);
+}
+
+.note-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+.note-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.note-title {
+  font-size: 1.08rem;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.note-content {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  flex: 1;
+}
+
+.note-date {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+/* زر الحذف */
+.btn-delete {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-delete svg { width: 19px; height: 19px; }
+
+.btn-delete:hover {
+  background: rgba(229, 72, 77, 0.12);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* ---------- ١٠) الحالة الفارغة والتحميل ---------- */
+.empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 3rem 1rem;
+}
+
+.empty svg {
+  width: 58px;
+  height: 58px;
+  opacity: 0.5;
+  margin-bottom: 0.8rem;
+}
+
+.loading {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 2rem;
+  font-weight: 600;
+}
+
+/* ---------- ١١) التنبيه المنبثق (Toast) ---------- */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  max-width: min(92vw, 420px);
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 0.85rem 1.4rem;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  animation: toastIn 0.3s ease;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, 14px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.toast-success { background: var(--success); color: #fff; }
+.toast-error   { background: var(--danger);  color: #fff; }
+
+/* ---------- ١٢) التجاوب مع الشاشات المختلفة ---------- */
+
+/* أجهزة لوحيات */
+@media (max-width: 768px) {
+  .auth-card { padding: 2rem 1.5rem; }
+  .container { padding: 1.6rem 1rem 3.5rem; }
+  .user-email { max-width: 150px; }
+}
+
+/* هواتف صغيرة */
+@media (max-width: 520px) {
+  .topbar-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.7rem;
+    padding: 0.7rem 1rem;
+  }
+
+  .brand-mini { justify-content: center; }
+
+  .user-area {
+    justify-content: space-between;
+    border-top: 1px dashed var(--border);
+    padding-top: 0.7rem;
+  }
+
+  .user-meta { flex: 1; min-width: 0; }
+
+  .notes-grid { grid-template-columns: 1fr; }
+
+  .note-form { padding: 1.2rem; }
+
+  .auth-card { padding: 1.8rem 1.2rem; border-radius: var(--radius); }
+
+  .brand-title { font-size: 1.6rem; }
+  .tab-btn { font-size: 0.88rem; padding: 0.6rem 0.3rem; }
+
+  .btn-delete { width: 44px; height: 44px; } /* مساحة لمس مريحة */
+}
+
+/* شاشات عريضة جداً */
+@media (min-width: 1400px) {
+  .notes-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+}
+
+/* احترام تقليل الحركة في النظام */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* تحسينات الوصول عند استخدام لوحة المفاتيح */
+:focus-visible { outline: 3px solid var(--primary-2); outline-offset: 2px; }
